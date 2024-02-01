@@ -1,0 +1,17 @@
+{
+  "name": "codegpt-slack",
+  "version": "1.0.0",
+  "description": "codeGPT bot on slack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/bolt": "^3.17.1",
+    "@slack/types": "^2.11.0",
+    "@types/node": "^20.11.16",
+    "axios": "^1.6.7"
+  }
+}
