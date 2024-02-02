@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { CodeGPTConfig,CodeGPTRequest,CodeGPTResponse, Message} from './interfaces';
-import { url } from 'inspector';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Suponiendo que codeGPTConfig ya está definido en alguna parte del código
 const codeGPTConfig: CodeGPTConfig = {
@@ -9,12 +10,14 @@ const codeGPTConfig: CodeGPTConfig = {
   agentId: process.env.CODEGPT_AGENT_ID || '',
 };
 
-export const completions = async (prompt: string): Promise<CodeGPTResponse> => {
+export const completions = async (prompt: string |  undefined): Promise<CodeGPTResponse> => {
+  
   const url = `${codeGPTConfig.apiEndpoint}/chat/completions`;
 
+  console.log("llegó a completions", url)
   let message: Message= {
     role: "user",
-    content : prompt
+    content : prompt ?? "sin prompt"
   }
   const payload: CodeGPTRequest = {
     agentId: codeGPTConfig.agentId,

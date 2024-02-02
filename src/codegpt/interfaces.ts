@@ -11,10 +11,7 @@ export interface Message {
     stream: boolean;
     format: string;
   }
-  // Define la estructura de la respuesta de la API de CodeGPT
- export interface CodeGPTResponse {
-    generated_text: string
-  }
+  export type CodeGPTResponse = string;
   
   // Define la estructura de la configuración de la API de CodeGPT
  export interface CodeGPTConfig {
