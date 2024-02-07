@@ -14,7 +14,7 @@ export const completions = async (prompt: string |  undefined): Promise<CodeGPTR
   
   const url = `${codeGPTConfig.apiEndpoint}/chat/completions`;
 
-  console.log("llegó a completions", url)
+  console.log("llegó a completions", prompt)
   let message: Message= {
     role: "user",
     content : prompt ?? "sin prompt"
@@ -28,6 +28,7 @@ export const completions = async (prompt: string |  undefined): Promise<CodeGPTR
 
 
   try {
+    console.log("payload", payload, "apikey", codeGPTConfig.apiKey)
     const response = await axios.post<CodeGPTResponse>(url, payload, {
       headers: {
         'Authorization': `Bearer ${codeGPTConfig.apiKey}`,
@@ -38,6 +39,7 @@ export const completions = async (prompt: string |  undefined): Promise<CodeGPTR
     console.log("response OK", response.data);
     return response.data;
   } catch (error: unknown) {
+    console.error("Error capturado en el bloque catch:", error);
     // Verificamos si el error es una instancia de AxiosError
     if (axios.isAxiosError(error)) {
       // Ahora podemos acceder a la propiedad response y a los detalles específicos del error de Axios
@@ -46,6 +48,7 @@ export const completions = async (prompt: string |  undefined): Promise<CodeGPTR
       // Manejo de errores de red o desconocidos
       console.error("Error al enviar mensaje a CodeGPT:", error);
     }
+    console.error(`HTTP error! status: ${(error as AxiosError).message}`);
     throw new Error(`HTTP error! status: ${(error as AxiosError).message}`);
   }
 };

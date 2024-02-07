@@ -38,6 +38,7 @@ slackApp.command('/ask', async ({ command, ack, say }) => {
 
   try {
     // Envía el texto del comando a la función completions y obtén la respuesta
+    console.log("cOMMANDT TEXT", command.text)
     const response = await completions(command.text);
     // Procesa la respuesta y envía el texto generado de vuelta al canal
     const reply = processCodeGPTResponse(response);
