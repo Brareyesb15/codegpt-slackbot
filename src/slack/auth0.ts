@@ -1,5 +1,6 @@
 import axios from "axios";
 import dotenv from 'dotenv';
+import { insertWorkspace } from "../turso/turso-repository";
 dotenv.config();
 
 const auth0Callback = async (code: any): Promise<void> => { // any hasta que descubras qué viene.
@@ -18,6 +19,7 @@ const auth0Callback = async (code: any): Promise<void> => { // any hasta que des
       throw new Error(response.data.error);
     }
     console.log("TOKENS A GUARDAR",response.data)
+    insertWorkspace(response.data.team.id,response.data.access_token,response.data.team.name,response.data.scope)
     // Aquí deberías almacenar el token de acceso y el ID del workspace de forma segura
     // Por ejemplo, en una base de datos
 };
