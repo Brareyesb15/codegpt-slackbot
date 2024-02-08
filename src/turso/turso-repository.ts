@@ -1,6 +1,7 @@
 import { createClient, Client } from "@libsql/client";
 import dotenv from "dotenv";
 dotenv.config();
+import { dbWorkspace } from "../slack/interfaces";
 
 const token: string | undefined = process.env.TURSO_TOKEN_API;
 const tursoDatabaseUrl: string | undefined = process.env.TURSO_DATABASE_URL;
@@ -38,25 +39,30 @@ async function insertWorkspace(
   }
 }
 
-// // Función para leer los últimos 20 mensajes de la base de datos para un chatbot y agente específicos
-// async function readMessages(apiKey: string, agentId: string, number: string): Promise<any[]> {
-//   try {
-//     const readSQL: string = `
-//       SELECT * FROM messages
-//       WHERE botId = ? AND agentId = ? AND phoneNumber = ?
-//       ORDER BY timestamp DESC
-//       LIMIT 20
-//     `;
-//     const result = await client.execute({
-//       sql: readSQL,
-//       args: [apiKey, agentId, number],
-//     });
 
-//     return result.rows.reverse();
-//   } catch (error: any) {
-//     console.error("An error occurred while reading messages:", error);
-//     return [];
-//   }
-// }
+async function readWorkspaces(workspace_id: string): Promise<dbWorkspace| null> {
+  try {
+    const readSQL: string = `
+      SELECT * FROM workspace
+      WHERE workspace_id = ? 
+    `;
+    const result = await client.execute({
+      sql: readSQL,
+      args: [workspace_id],
+    });
 
-export { insertWorkspace };
+    if (result.rows.length > 0) {
+      const response : any = result.rows[0]
+      console.log("Response db", response)
+      return response; // Devolver solo el primer elemento del array
+    } else {
+      return null; // Devolver null si no se encontró ningún resultado
+    }
+  } catch (error: any) {
+    console.error("An error occurred while reading messages:", error);
+    return null;
+  }
+}
+
+
+export { insertWorkspace,readWorkspaces };

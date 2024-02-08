@@ -2,10 +2,10 @@ import axios from 'axios';
 import { Router, Request, Response } from 'express';
 import { auth0Callback } from '../slack/auth0';
 import initializeDatabase from '../turso/create';
-initializeDatabase
-
-
+import { SlackEvent } from '../slack/interfaces';
+import { selectWorkspace } from '../app-flow/init-bot';
 const mainRouter = Router();
+
 
 mainRouter.get('/welcome', (req: Request, res: Response) => {
   try {
@@ -35,10 +35,11 @@ mainRouter.get('/welcome', (req: Request, res: Response) => {
 
   mainRouter.post('/slack/events', async (req: Request, res: Response) => {
     const { challenge } = req.body; // Extraer el valor de challenge del cuerpo de la solicitud
-    console.log("lo que viene", req.body)
+    const slackEvent : SlackEvent = req.body
     try {
         // Aquí puedes hacer lo que necesites con el valor de challenge
         console.log('Challenge recibido:', challenge);
+        selectWorkspace(slackEvent)
 
         // Enviar una respuesta con el valor de challenge
         res.set('Content-Type', 'text/plain'); // Establecer el encabezado Content-Type

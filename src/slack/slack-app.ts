@@ -7,13 +7,13 @@ import { processCodeGPTResponse } from '../codegpt/process-codegpt';
 dotenv.config();
 
 // Validar que las variables de entorno necesarias estén configuradas
-if (!process.env.SLACK_BOT_TOKEN || !process.env.SLACK_APP_TOKEN) {
+if (!process.env.SLACK_WORKSPACE_ACCESS_TOKEN || !process.env.SLACK_APP_TOKEN) {
   throw new Error('Missing environment variables');
 }
 
 // Configuración de la aplicación Slack
 const slackApp = new App({
-  token: process.env.SLACK_BOT_TOKEN,
+  token: process.env.SLACK_WORKSPACE_ACCESS_TOKEN,
   appToken: process.env.SLACK_APP_TOKEN,
   socketMode: true,
 });
