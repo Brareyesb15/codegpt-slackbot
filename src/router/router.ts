@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { Router, Request, Response } from 'express';
 import { auth0Callback } from '../slack/auth0';
-
+import initializeDatabase from '../turso/create';
+initializeDatabase
 
 
 const mainRouter = Router();
@@ -15,8 +16,9 @@ mainRouter.get('/welcome', (req: Request, res: Response) => {
 });
 
   mainRouter.get('/oauth/callback', async (req: Request, res: Response) => {
-    console.log("Se usó callback")
+   
     const { code } = req.query;
+    console.log("Se usó callback", code)
 
     if (!code) {
       return res.status(400).send('Código de autorización no proporcionado.');
@@ -31,4 +33,29 @@ mainRouter.get('/welcome', (req: Request, res: Response) => {
     }
   });
 
+  mainRouter.post('/slack/events', async (req: Request, res: Response) => {
+    const { challenge } = req.body; // Extraer el valor de challenge del cuerpo de la solicitud
+    console.log("lo que viene", req.body)
+    try {
+        // Aquí puedes hacer lo que necesites con el valor de challenge
+        console.log('Challenge recibido:', challenge);
+
+        // Enviar una respuesta con el valor de challenge
+        res.set('Content-Type', 'text/plain'); // Establecer el encabezado Content-Type
+        res.status(200).send(challenge); // Enviar el valor de challenge como cuerpo de la respuesta
+    } catch (error) {
+        console.error('Error processing Slack message:', error);
+        res.sendStatus(500);
+    }
+});
+
+mainRouter.get("/createTable", async (req, res) => {
+  try {
+
+    const response =  await initializeDatabase();
+    res.status(200).send(response);
+  } catch (error: any) {
+    res.status(400).send(error.message);
+  }
+});
 export default mainRouter;

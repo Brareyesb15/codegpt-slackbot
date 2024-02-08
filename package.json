@@ -4,12 +4,13 @@
   "description": "codeGPT bot on slack",
   "main": "src/index.ts",
   "scripts": {
-    "start": "nodemon dist/index.js", 
+    "start": "nodemon dist/index.js",
     "watch": "tsc-watch --onSuccess \"npm run start\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@libsql/client": "^0.4.3",
     "@slack/bolt": "^3.17.1",
     "@slack/types": "^2.11.0",
     "@types/node": "^20.11.16",
