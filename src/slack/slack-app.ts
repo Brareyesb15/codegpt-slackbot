@@ -3,20 +3,31 @@ import { App, MessageEvent, SayFn } from '@slack/bolt';
 import dotenv from 'dotenv';
 import { completions } from '../codegpt/codegpt';
 import { processCodeGPTResponse } from '../codegpt/process-codegpt';
-
+import { CustomApp, SlackEvent} from './interfaces'; // Asegúrate de que la ruta sea correcta
+import { dbWorkspace } from '../turso/interfaces';
 dotenv.config();
 
-// Validar que las variables de entorno necesarias estén configuradas
-if (!process.env.SLACK_WORKSPACE_ACCESS_TOKEN || !process.env.SLACK_APP_TOKEN) {
-  throw new Error('Missing environment variables');
+// Define la propiedad startWithId en la interfaz App<StringIndexed>
+declare module '@slack/bolt' {
+  interface App {
+    startWithId(id: string): Promise<void>;
+  }
 }
 
 // Configuración de la aplicación Slack
-const slackApp = new App({
+const slackApp: CustomApp = new App({
   token: process.env.SLACK_WORKSPACE_ACCESS_TOKEN,
   appToken: process.env.SLACK_APP_TOKEN,
-  socketMode: true,
 });
+
+slackApp.startWithId = async (workspace_id: string) => {
+  try {
+    await slackApp.start();
+    console.log(`⚡️ Slackbot with ID ${workspace_id} is running!`);
+  } catch (error) {
+    console.error('Failed to start the Slack app:', error);
+  }
+};
 
 slackApp.message(async ({ message, say }: { message: MessageEvent, say: SayFn }) => {
   console.log("Message", message)

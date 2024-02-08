@@ -38,6 +38,7 @@ mainRouter.get('/welcome', (req: Request, res: Response) => {
     const slackEvent : SlackEvent = req.body
     try {
         // Aquí puedes hacer lo que necesites con el valor de challenge
+      
         console.log('Challenge recibido:', challenge);
         selectWorkspace(slackEvent)
 

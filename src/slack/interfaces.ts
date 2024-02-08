@@ -1,3 +1,4 @@
+import { App } from '@slack/bolt';
 export interface SlackEvent {
     token: string;
     team_id: string;
@@ -29,10 +30,6 @@ export interface SlackEvent {
     is_ext_shared_channel: boolean;
     event_context: string;
   }
-  
-export interface dbWorkspace {
-  workspace_id: string;
-  access_token: string;
-  workspace_name: string;
-  scope: string;
+export interface CustomApp extends App {
+  startWithId(id: string): Promise<void>;
 }

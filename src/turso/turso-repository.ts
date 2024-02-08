@@ -1,7 +1,7 @@
 import { createClient, Client } from "@libsql/client";
 import dotenv from "dotenv";
 dotenv.config();
-import { dbWorkspace } from "../slack/interfaces";
+import { dbWorkspace } from "./interfaces";
 
 const token: string | undefined = process.env.TURSO_TOKEN_API;
 const tursoDatabaseUrl: string | undefined = process.env.TURSO_DATABASE_URL;
@@ -25,19 +25,43 @@ async function insertWorkspace(
   scope: string
 ): Promise<void> {
   try {
-    console.log("Entró a Turso?");
-    const insertSQL: string = `
-      INSERT INTO workspace (workspace_id, access_token, workspace_name, scope)
-      VALUES (?, ?, ?, ?)
+    // Verificar si el registro ya existe
+    const checkSQL: string = `
+      SELECT COUNT(*) AS count FROM workspace WHERE workspace_id = ?
     `;
-    await client.execute({
-      sql: insertSQL,
-      args: [workspace_id, access_token, workspace_name, scope],
+    const checkResult = await client.execute({
+      sql: checkSQL,
+      args: [workspace_id],
     });
+    const verify : any = checkResult.rows[0].count
+    
+    if (verify > 0) {
+      // Si el registro existe, actualizarlo
+      const updateSQL: string = `
+        UPDATE workspace 
+        SET access_token = ?, workspace_name = ?, scope = ?
+        WHERE workspace_id = ?
+      `;
+      await client.execute({
+        sql: updateSQL,
+        args: [access_token, workspace_name, scope, workspace_id],
+      });
+    } else {
+      // Si el registro no existe, insertarlo
+      const insertSQL: string = `
+        INSERT INTO workspace (workspace_id, access_token, workspace_name, scope)
+        VALUES (?, ?, ?, ?)
+      `;
+      await client.execute({
+        sql: insertSQL,
+        args: [workspace_id, access_token, workspace_name, scope],
+      });
+    }
   } catch (error: any) {
-    console.error("An error occurred while inserting a workspace:", error);
+    console.error("An error occurred while inserting/updating a workspace:", error);
   }
 }
+
 
 
 async function readWorkspaces(workspace_id: string): Promise<dbWorkspace| null> {

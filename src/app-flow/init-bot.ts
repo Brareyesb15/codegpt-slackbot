@@ -11,6 +11,8 @@ const selectWorkspace = async (slackEvent: SlackEvent): Promise<void> => {
     // find the workspace in db 
     const workspace : dbWorkspace | null = await readWorkspaces(workspace_id)
     
+    
+    // llamar a la función de slack respectiva 
 
 
     }   
