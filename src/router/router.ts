@@ -17,7 +17,7 @@ mainRouter.get('/welcome', (req: Request, res: Response) => {
 
   mainRouter.get('/oauth/callback', async (req: Request, res: Response) => {
    
-    const { code } = req.query;
+    const { code} = req.query;
     console.log("Se usó callback", code)
 
     if (!code) {
@@ -39,7 +39,7 @@ mainRouter.get('/welcome', (req: Request, res: Response) => {
     try {
         // Aquí puedes hacer lo que necesites con el valor de challenge
       
-        console.log('Challenge recibido:', challenge);
+        // console.log('Evento recibido:', slackEvent);
         selectWorkspace(slackEvent)
 
         // Enviar una respuesta con el valor de challenge

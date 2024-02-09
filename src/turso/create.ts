@@ -3,9 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const token = process.env.TURSO_TOKEN_API;
-const tursoDatabaseUrl : any = process.env.TURSO_DATABASE_URL;
-
-
+const tursoDatabaseUrl: any = process.env.TURSO_DATABASE_URL;
 
 // Inicializar el cliente de Turso DB
 const client = createClient({
@@ -14,25 +12,25 @@ const client = createClient({
   authToken: token,
 });
 
-// Función para crear la tabla si no existe
+// Función para crear la tabla workspaces con la columna 'date'
 async function initializeDatabase() {
   try {
-    
-    const createTableSQL = `
-      CREATE TABLE IF NOT EXISTS workspace (
-        workspace_id TEXT NOT NULL PRIMARY KEY,
+
+    // Crear la nueva tabla con la columna 'date'
+    await client.execute(`
+      CREATE TABLE workspaces (
+        app_id TEXT NOT NULL PRIMARY KEY,
+        workspace_id TEXT NOT NULL,
         access_token TEXT NOT NULL,
         workspace_name TEXT NOT NULL,
         scope TEXT NOT NULL,
+        date DATE
       )
-    `;
-    await client.execute(createTableSQL);
-    console.log('New table "messages2" has been created.');
+    `);
+    console.log('New table "workspaces" has been created');
   } catch (error: any) {
-    console.error(
-      "An error occurred while initializing the database:",
-      error
-    );
+    console.error('An error occurred while initializing the database:', error);
   }
 }
+
 export default initializeDatabase;
