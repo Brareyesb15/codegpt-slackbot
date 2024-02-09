@@ -17,6 +17,7 @@ export interface SlackEvent {
       event_ts: string;
       channel_type: string;
       bot_id : string
+      thread_ts : string;
     };
     type: string;
     event_id: string;
@@ -32,7 +33,7 @@ export interface SlackEvent {
     event_context: string;
   }
   // Este es interface de respuesta de cliente. Es el único que admitimos ahora. Podemos sumar más tipos si los necesitamos.
-  
+
   export interface AuthResponse {
     ok: boolean;
     app_id: string;
