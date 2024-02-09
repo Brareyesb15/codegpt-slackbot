@@ -24,9 +24,12 @@ const selectWorkspace = async (slackEvent: SlackEvent): Promise<void> => {
     // Utiliza el token de acceso del espacio de trabajo para iniciar la aplicación Slack
     const accessToken = workspace.access_token;
     
-    // Inicia la aplicación Slack con el accessToken
-    createSlackApp(accessToken, process.env.SLACK_APP_TOKEN || '', process.env.SLACK_SIGNING_SECRET || "",slackEvent);
-    // Aquí puedes iniciar el bot, escuchar eventos, etc.
+    if (slackEvent.event.type === 'message' &&
+    slackEvent.event.client_msg_id && // Verifica que el mensaje tenga un client_msg_id
+    !slackEvent.event.bot_id) // Verifica que el mensaje no haya sido enviado por un bot
+
+  // Si pasa las comprobaciones, inicia la aplicación Slack con el accessToken
+  createSlackApp(accessToken, process.env.SLACK_APP_TOKEN || '', process.env.SLACK_SIGNING_SECRET || "", slackEvent);
   }
 };
 

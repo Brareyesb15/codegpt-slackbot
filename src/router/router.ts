@@ -17,7 +17,7 @@ mainRouter.get('/welcome', (req: Request, res: Response) => {
 
   mainRouter.get('/oauth/callback', async (req: Request, res: Response) => {
    
-    const { code} = req.query;
+    const { code } = req.query;
     console.log("Se usó callback", code)
 
     if (!code) {

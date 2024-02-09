@@ -16,6 +16,7 @@ export interface SlackEvent {
       channel: string;
       event_ts: string;
       channel_type: string;
+      bot_id : string
     };
     type: string;
     event_id: string;
@@ -30,6 +31,7 @@ export interface SlackEvent {
     is_ext_shared_channel: boolean;
     event_context: string;
   }
+  // Este es interface de respuesta de cliente. Es el único que admitimos ahora. Podemos sumar más tipos si los necesitamos.
   
   export interface AuthResponse {
     ok: boolean;
