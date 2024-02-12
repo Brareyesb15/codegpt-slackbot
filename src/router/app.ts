@@ -1,6 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from "cors";
 import mainRouter from './router';
+import bodyParser from 'body-parser';
 
 
 
@@ -16,6 +17,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(mainRouter);

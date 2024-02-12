@@ -34,8 +34,10 @@ mainRouter.get('/welcome', (req: Request, res: Response) => {
   });
 
   mainRouter.post('/slack/events', async (req: Request, res: Response) => {
+   
     const { challenge } = req.body; // Extraer el valor de challenge del cuerpo de la solicitud
-    const slackEvent : SlackEvent = req.body
+    const slackEvent = req.body
+    console.log("en router", slackEvent)
     try {
         // Aquí puedes hacer lo que necesites con el valor de challenge
       

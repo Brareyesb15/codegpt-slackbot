@@ -65,6 +65,7 @@ authResponse : AuthResponse
 
 
 async function readWorkspaces(app_id: string): Promise<dbWorkspace| null> {
+  console.log("apiId", app_id)
   try {
     const readSQL: string = `
       SELECT * FROM workspaces
