@@ -1,12 +1,12 @@
 import { WebClient } from '@slack/web-api';
-import { completions } from '../codegpt/codegpt';
 import { SlackEvent } from './interfaces';
+import { completions } from '../codegpt/codegpt';
 
 // Esta función maneja los eventos de mensaje de Slack
 export async function handleMessageEvent(slackEvent: SlackEvent, access_token: string) {
+  console.log("Entro a handle", slackEvent)
   // Descarta el evento si no tiene client_msg_id o si fue enviado por un bot
-  if (slackEvent.event.type !== 'message' ||
-      !slackEvent.event.client_msg_id || // Verifica que el mensaje tenga un client_msg_id
+  if (!slackEvent.event.client_msg_id || // Verifica que el mensaje tenga un client_msg_id
       slackEvent.event.bot_id) { // Verifica que el mensaje no haya sido enviado por un bot
     return {
       statusCode: 200,
@@ -18,8 +18,14 @@ export async function handleMessageEvent(slackEvent: SlackEvent, access_token: s
   const slackClient = new WebClient(access_token);
 
   try {
+    let message = [
+      {
+        role: "user",
+        content : slackEvent.event.text
+      }
+    ]
     // Suponiendo que completions es una función que procesa el texto y devuelve una respuesta
-    const codeGPTResponse = await completions(slackEvent.event.text);
+    const codeGPTResponse = await completions(message);
     const responseText = codeGPTResponse;
 
     // Prepara los parámetros para enviar la respuesta de CodeGPT al canal de Slack

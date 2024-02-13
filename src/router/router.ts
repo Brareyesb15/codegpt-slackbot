@@ -46,7 +46,7 @@ mainRouter.get('/welcome', (req: Request, res: Response) => {
 
         // Enviar una respuesta con el valor de challenge
         res.set('Content-Type', 'text/plain'); // Establecer el encabezado Content-Type
-        res.status(200).send(challenge); // Enviar el valor de challenge como cuerpo de la respuesta
+        challenge ? res.status(200).send(challenge) : res.status(200).send("ok")  // Enviar el valor de challenge como cuerpo de la respuesta
     } catch (error) {
         console.error('Error processing Slack message:', error);
         res.sendStatus(500);

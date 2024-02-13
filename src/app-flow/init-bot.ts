@@ -10,8 +10,6 @@ import { handleModalSubmission } from "../slack/modal-event";
 
 dotenv.config();
 
-
-
 const selectWorkspace = async (slackEvent: any): Promise<void> => {
   // Selecciona el espacio de trabajo del evento de Slack
   let app_id: string = "";
@@ -45,9 +43,13 @@ const selectWorkspace = async (slackEvent: any): Promise<void> => {
 export async function dispatchEvent(event: any, accessToken: string) {
   console.log("on dispatch", event)
   // Verifica el tipo de evento y redirige a la función correspondiente
-  if (event?.event?.type === 'message') {
+  // if (event?.event?.type === 'message') {
+  //   return handleMessageEvent(event, accessToken); } Ya el bot no escucha mensajes normales.
+    if (event?.event?.type === 'app_mention') {
+    // Aquí asumimos que 'event.view' contiene la información del modal enviado por el usuario
     return handleMessageEvent(event, accessToken);
-  } else if (event?.command) {
+  }
+   else if (event?.command) {
     return handleCommand(event, accessToken);
   } else if (event.type === 'view_submission') {
     // Aquí asumimos que 'event.view' contiene la información del modal enviado por el usuario
