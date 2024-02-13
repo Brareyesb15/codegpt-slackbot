@@ -12,7 +12,8 @@ const codeGPTConfig: CodeGPTConfig = {
 };
 
 export async function completions( message: Message[]): Promise<CodeGPTResponse> {
-  const url = `${codeGPTConfig.apiEndpoint}/chat/completion`;
+  console.log(message)
+  const url = `${codeGPTConfig.apiEndpoint}/chat/completions`;
   const payload: CodeGPTRequest = {
     agentId: codeGPTConfig.agentId,
     messages: message,

@@ -18,14 +18,42 @@ export async function handleMessageEvent(slackEvent: SlackEvent, access_token: s
   const slackClient = new WebClient(access_token);
 
   try {
-    let message = [
-      {
-        role: "user",
-        content: slackEvent.event.text
-      }
+    let message;
+
+// Verifica si el mensaje es parte de un hilo
+if (slackEvent.event.thread_ts) {
+    // Obtiene el historial del hilo usando el 'thread_ts' del mensaje
+    const threadHistory : any= await slackClient.conversations.replies({
+        channel: slackEvent.event.channel,
+        ts: slackEvent.event.thread_ts
+    })
+    console.log("HISTORIALT",threadHistory)
+
+    const threadMessages : any[] = threadHistory.messages.slice(-10); // Invertir el orden de los últimos 10 mensajes del hilo
+    const threadMessageArray = threadMessages.map(threadMessage => {
+        let role = 'user';
+        if (threadMessage.bot_id) {
+            role = 'assistant';
+        }
+        return { role, content: threadMessage.text };
+    });
+
+
+    message = threadMessageArray;
+    message.push({
+      role: "user",
+      content: slackEvent.event.text
+    })
+} else {
+    message = [
+        {
+            role: "user",
+            content: slackEvent.event.text
+        }
     ];
-    // Suponiendo que completions es una función que procesa el texto y devuelve una respuesta
-    const codeGPTResponse = await completions(message);
+}
+
+const codeGPTResponse = await completions(message);
     const responseText = codeGPTResponse;
 
     // Prepara los parámetros para enviar la respuesta de CodeGPT al canal de Slack
