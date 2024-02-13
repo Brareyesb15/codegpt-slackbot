@@ -3,7 +3,7 @@ import { SlackEvent } from "../slack/interfaces";
 import { readWorkspaces } from "../turso/turso-repository";
 import { dbWorkspace } from "../turso/interfaces";
 import dotenv from 'dotenv';
-import { handleMessageEvent } from "../slack/message-event";
+import { directMessageEvent, handleMessageEvent } from "../slack/message-event";
 import { handleCommand } from "../slack/command-event";
 import { handleModalSubmission } from "../slack/modal-event";
 
@@ -43,8 +43,8 @@ const selectWorkspace = async (slackEvent: any): Promise<void> => {
 export async function dispatchEvent(event: any, accessToken: string) {
   console.log("on dispatch", event)
   // Verifica el tipo de evento y redirige a la función correspondiente
-  // if (event?.event?.type === 'message') {
-  //   return handleMessageEvent(event, accessToken); } Ya el bot no escucha mensajes normales.
+  if (event?.event?.type === 'message') {
+    return directMessageEvent(event, accessToken); } // Ya el bot no escucha mensajes normales, funciona para DM con bot
     if (event?.event?.type === 'app_mention') {
     // Aquí asumimos que 'event.view' contiene la información del modal enviado por el usuario
     return handleMessageEvent(event, accessToken);
