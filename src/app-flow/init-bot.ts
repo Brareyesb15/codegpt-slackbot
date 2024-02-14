@@ -1,6 +1,6 @@
 import axios from "axios";
 import { SlackEvent } from "../slack/interfaces";
-import { readWorkspaces } from "../turso/turso-repository";
+import { readWorkspaces } from "../turso/workspaces-repository";
 import { dbWorkspace } from "../turso/interfaces";
 import dotenv from 'dotenv';
 import { directMessageEvent, handleMessageEvent } from "../slack/message-event";

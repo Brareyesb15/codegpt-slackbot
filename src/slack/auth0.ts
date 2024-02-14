@@ -1,6 +1,6 @@
 import axios from "axios";
 import dotenv from 'dotenv';
-import { insertWorkspace } from "../turso/turso-repository";
+import { insertWorkspace } from "../turso/workspaces-repository";
 import { AuthResponse } from "./interfaces";
 dotenv.config();
 
