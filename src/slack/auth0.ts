@@ -5,25 +5,30 @@ import { AuthResponse } from "./interfaces";
 dotenv.config();
 
 const auth0Callback = async (code: any): Promise<void> => { // any hasta que descubras qué viene. Tiparlo con el evento.
-    // Realiza la solicitud al endpoint de Slack para obtener el token de acceso
-    const response = await axios.post('https://slack.com/api/oauth.v2.access', null, {
-      params: {
-        client_id: process.env.SLACK_CLIENT_ID,
-        client_secret: process.env.SLACK_CLIENT_SECRET,
-        code: code,
-        redirect_uri: process.env.SLACK_REDIRECT_URI,
-      },
-    });
-  
-    // Verifica si la solicitud fue exitosa
-    if (!response.data.ok) {
-      throw new Error(response.data.error);
+    try {
+        // Realiza la solicitud al endpoint de Slack para obtener el token de acceso
+        const response = await axios.post('https://slack.com/api/oauth.v2.access', null, {
+            params: {
+                client_id: process.env.SLACK_CLIENT_ID,
+                client_secret: process.env.SLACK_CLIENT_SECRET,
+                code: code,
+                redirect_uri: process.env.SLACK_REDIRECT_URI,
+            },
+        });
+
+        // Verifica si la solicitud fue exitosa
+        if (!response.data.ok) {
+            throw new Error(response.data.error);
+        }
+        console.log("TOKENS A GUARDAR", response.data)
+        const authResponse: AuthResponse = response.data;
+        await insertWorkspace(authResponse); // Usamos await para asegurarnos de que insertWorkspace se complete antes de continuar
+        // Aquí deberías almacenar el token de acceso y el ID del workspace de forma segura
+        // Por ejemplo, en una base de datos
+    } catch (error) {
+        console.error("An error occurred during authentication callback:", error);
+        // Aquí puedes manejar el error de la manera que desees, como enviar una respuesta de error al cliente o registrar el error
     }
-    console.log("TOKENS A GUARDAR",response.data)
-    const authResponse : AuthResponse = response.data
-    insertWorkspace(authResponse)
-    // Aquí deberías almacenar el token de acceso y el ID del workspace de forma segura
-    // Por ejemplo, en una base de datos
 };
 
 export { auth0Callback };

@@ -12,17 +12,17 @@ dotenv.config();
 
 const selectWorkspace = async (slackEvent: any): Promise<void> => {
   // Selecciona el espacio de trabajo del evento de Slack
-  let app_id: string = "";
+  let workspace_id: string = "";
   if (slackEvent.payload) { 
     const payloadObject = JSON.parse(slackEvent.payload); // Convertir la cadena JSON a un objeto JSON
     slackEvent = JSON.parse(slackEvent.payload)
-    app_id = payloadObject.api_app_id;
+    workspace_id = payloadObject.event.team_id;
   } else {
-    app_id = slackEvent.api_app_id;
+    workspace_id= slackEvent.team_id;
   }
   
   // Encuentra el espacio de trabajo en la base de datos 
-  const workspace: dbWorkspace | null = await readWorkspaces(app_id);
+  const workspace: dbWorkspace | null = await readWorkspaces(workspace_id);
   
   if (workspace) {
     // Utiliza el token de acceso del espacio de trabajo para iniciar la aplicación Slack

@@ -18,62 +18,72 @@ const client: Client = createClient({
   authToken: token,
 });
 
-
-async function insertWorkspace(
-authResponse : AuthResponse
-): Promise<void> {
+async function insertWorkspace(authResponse: AuthResponse): Promise<void> {
   try {
     // Verificar si el registro ya existe
     const checkSQL: string = `
-      SELECT COUNT(*) AS count FROM workspaces WHERE app_id = ?
+      SELECT COUNT(*) AS count FROM workspaces WHERE workspace_id = ?
     `;
     const checkResult = await client.execute({
       sql: checkSQL,
-      args: [authResponse.app_id],
+      args: [authResponse.team.id],
     });
-    const verify: any = checkResult.rows[0].count
-    
+    const verify: any = checkResult.rows[0].count;
+
     if (verify > 0) {
-      // Si el registro existe, actualizarlo con la fecha actual
       const currentDate = new Date().toISOString().slice(0, 10); // Obtener la fecha actual en formato ISO YYYY-MM-DD
+      // Si el registro existe, actualizarlo
       const updateSQL: string = `
         UPDATE workspaces 
-        SET workspace_id = ?, access_token = ?, workspace_name = ?, scope = ?, date = ?
-        WHERE app_id = ?
+        SET access_token = ?, workspace_name = ?, scope = ?, date = ?
+        WHERE workspace_id = ?
       `;
       await client.execute({
         sql: updateSQL,
-        args: [authResponse.team.id, authResponse.access_token, authResponse.team.name, authResponse.scope, currentDate, authResponse.app_id],
+        args: [
+          authResponse.access_token,
+          authResponse.team.name,
+          authResponse.scope,
+          currentDate,
+          authResponse.team.id,
+        ],
       });
     } else {
-      // Si el registro no existe, insertarlo con la fecha actual
-      const currentDate = new Date().toISOString().slice(0, 10); // Obtener la fecha actual en formato ISO YYYY-MM-DD
+      const currentDate = new Date().toISOString().slice(0, 10);
+      // Si el registro no existe, insertarlo
       const insertSQL: string = `
-        INSERT INTO workspaces (app_id, workspace_id, access_token, workspace_name, scope, date)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO workspaces (workspace_id, access_token, workspace_name, scope, date, organization_id)
+        VALUES (?, ?, ?, ?, ?, NULL)
       `;
       await client.execute({
         sql: insertSQL,
-        args: [authResponse.app_id, authResponse.team.id, authResponse.access_token, authResponse.team.name, authResponse.scope, currentDate],
+        args: [
+          authResponse.team.id,
+          authResponse.access_token,
+          authResponse.team.name,
+          authResponse.scope,
+          currentDate,
+        ],
       });
     }
   } catch (error: any) {
     console.error("An error occurred while inserting/updating a workspace:", error);
   }
+
 }
 
 
 
-async function readWorkspaces(app_id: string): Promise<dbWorkspace| null> {
-  console.log("apiId", app_id)
+async function readWorkspaces(workspace_id: string): Promise<dbWorkspace| null> {
+
   try {
     const readSQL: string = `
       SELECT * FROM workspaces
-      WHERE app_id = ? 
+      WHERE workspace_id = ? 
     `;
     const result = await client.execute({
       sql: readSQL,
-      args: [app_id],
+      args: [workspace_id],
     });
 
     if (result.rows.length > 0) {

@@ -16,15 +16,19 @@ mainRouter.get('/welcome', (req: Request, res: Response) => {
 });
 
   mainRouter.get('/oauth/callback', async (req: Request, res: Response) => {
-   
-    const { code } = req.query;
-    console.log("Se usó callback", code)
+    // cuando peguemos el botón en el front debe mandar el organization_id por state.
+    const { code, state } = req.query;
+
+    console.log("Se usó callback", code,state)
 
     if (!code) {
       return res.status(400).send('Código de autorización no proporcionado.');
     }
 
     try {
+  
+      const organization_id = state
+      console.log(organization_id)
       auth0Callback(code)
       res.status(200).send('Autenticación exitosa. Puedes cerrar esta ventana.');
     } catch (error: any) {
