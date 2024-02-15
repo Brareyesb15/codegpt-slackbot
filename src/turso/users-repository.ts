@@ -40,56 +40,65 @@ export async function findUserWithAgent(user_id: string): Promise<any | null> {
     return null;
   }
 }
-export async function assignAgentToUser(event: any) {
+export async function assignAgentToUser(event: ViewSubmissionEvent) {
   try {
     console.log(event);
     // Primero, intentamos encontrar el usuario con el user_id dado
-    // const findUserSQL = `
-    //   SELECT * FROM users
-    //   WHERE user_id = ?
-    // `;
-    // const userResult = await client.execute({
-    //   sql: findUserSQL,
-    //   args: [user_id],
-    // });
+    const findUserSQL = `
+      SELECT * FROM users
+      WHERE user_id = ?
+    `;
+    const userResult = await client.execute({
+      sql: findUserSQL,
+      args: [event.user.id],
+    });
 
-    // // Si no encontramos un usuario, creamos uno nuevo
-    // if (userResult.rows.length === 0) {
-    //   // Aquí deberías definir los valores para date y workspace_id
-    //   const date = new Date().toISOString().slice(0, 10); // Formato YYYY-MM-DD
-    //   const workspace_id = 'your_workspace_id'; // Debes proporcionar el workspace_id adecuado
-
-    //   await createUser(date, user_id, workspace_id, agent);
-    //   console.log(`User with user_id ${user_id} has been created and assigned to agent ${agent}.`);
-    // } else {
-    //   // Si el usuario existe, actualizamos el campo 'agent'
-    //   const updateAgentSQL = `
-    //     UPDATE users
-    //     SET agent = ?
-    //     WHERE user_id = ?
-    //   `;
-    //   await client.execute({
-    //     sql: updateAgentSQL,
-    //     args: [agent, user_id],
-    //   });
-    //   console.log(`Agent ${agent} has been assigned to user ${user_id}.`);
-    // }
+    // Si no encontramos un usuario, creamos uno nuevo
+    if (userResult.rows.length === 0) {
+      await createUser(event);
+      console.log(
+        `User with user_id ${event.user.id} has been created and assigned to agent.`
+      );
+    } else {
+      // Si el usuario existe, actualizamos el campo 'agent'
+      const updateAgentSQL = `
+          UPDATE users
+          SET agent = ?
+          WHERE user_id = ?
+        `;
+      await client.execute({
+        sql: updateAgentSQL,
+        args: [
+          event.view.state.values.agent_selection_block.agent_selection
+            .selected_option.text.text,
+          event.user.id,
+        ],
+      });
+      console.log(`Agent has been assigned to user ${event.user.id}.`);
+    }
   } catch (error: any) {
     console.error("An error occurred:", error.message);
   }
 }
 
-async function createUser(event: any, agent: string | null) {
+async function createUser(event: ViewSubmissionEvent) {
   try {
+    const date = new Date().toISOString().slice(0, 10); // Formato YYYY-MM-DD
     const insertUserSQL = `
       INSERT INTO users (date, user_id, workspace_id, agent)
       VALUES (?, ?, ?, ?)
     `;
     await client.execute({
       sql: insertUserSQL,
-      args: [event.date, event.user_id, event.workspace_id, agent],
+      args: [
+        date,
+        event.user.id,
+        event.team.id,
+        event.view.state.values.agent_selection_block.agent_selection
+          .selected_option.text.text,
+      ],
     });
-    console.log(`User with user_id ${event.user_id} has been created.`);
+    console.log(`User  has been created.`);
   } catch (error: any) {
     console.error("An error occurred while creating the user:", error.message);
   }

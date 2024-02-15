@@ -51,9 +51,7 @@ export async function dispatchEvent(event: any, accessToken: string) {
       return await handleMessageEvent(event, accessToken);
     } else if (event?.command) {
       return await handleCommand(event, accessToken);
-    } else if (event.type === "view_submission") {
-      console.log("Si es modal");
-      // Aquí asumimos que 'event.view' contiene la información del modal enviado por el usuario
+    } else if (event?.type === "view_submission") {
       return await handleModalSubmission(event, accessToken);
     }
 

@@ -2,11 +2,15 @@ import { assignAgentToUser } from "../turso/users-repository";
 import { SlackEvent } from "./interfaces";
 import { WebClient, ViewsOpenArguments } from "@slack/web-api";
 
-export async function handleModalSubmission(event: any, accessToken: string) {
-  const slackClient = new WebClient(accessToken);
+export async function handleModalSubmission(
+  event: ViewSubmissionEvent,
+  accessToken: string
+) {
   console.log("Event on handleModalSubmission", event);
   try {
-    assignAgentToUser(event);
+    if (event.view.callback_id === "select_agent_modal") {
+      assignAgentToUser(event);
+    }
     // // Aquí procesarías la información enviada por el usuario a través del modal
     // // Por ejemplo, guardar las configuraciones en una base de datos o aplicarlas al bot
     // const { prompt, name, welcome } = event.view.state.values;
