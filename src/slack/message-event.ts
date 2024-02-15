@@ -1,6 +1,7 @@
 import { WebClient } from '@slack/web-api';
 import { SlackEvent } from './interfaces';
-import { completions } from '../codegpt/codegpt';
+import { completion, completions } from '../codegpt/codegpt';
+import { findUserWithAgent } from '../turso/users-repository';
 
 
 // Esta función maneja los eventos de mensaje de Slack
@@ -18,6 +19,7 @@ export async function handleMessageEvent(slackEvent: SlackEvent, access_token: s
   const slackClient = new WebClient(access_token);
 
   try {
+
     let message;
 
 // Verifica si el mensaje es parte de un hilo
@@ -27,7 +29,6 @@ if (slackEvent.event.thread_ts) {
         channel: slackEvent.event.channel,
         ts: slackEvent.event.thread_ts
     })
-    console.log("HISTORIALT",threadHistory)
 
     const threadMessages : any[] = threadHistory.messages.slice(-10); // Invertir el orden de los últimos 10 mensajes del hilo
     const threadMessageArray = threadMessages.map(threadMessage => {
@@ -52,8 +53,13 @@ if (slackEvent.event.thread_ts) {
         }
     ];
 }
-
-const codeGPTResponse = await completions(message);
+let codeGPTResponse : string;
+    let agent = await findUserWithAgent(slackEvent.event.user);
+    let agentId = agent.agentId
+    agent? 
+    codeGPTResponse = await completions(message,agentId) : 
+    codeGPTResponse = await completion(message)
+    
     const responseText = codeGPTResponse;
 
     // Prepara los parámetros para enviar la respuesta de CodeGPT al canal de Slack
@@ -115,8 +121,16 @@ export async function directMessageEvent(slackEvent: SlackEvent, access_token: s
         role: "user",
         content : slackEvent.event.text
     });
+    
+    let codeGPTResponse : string;
+    let agent = await findUserWithAgent(slackEvent.event.user);
 
-    const codeGPTResponse = await completions(messageArray);
+    if (agent){
+      let agentId = agent.agentId
+      codeGPTResponse = await completions(messageArray,agentId);
+    } 
+    else  codeGPTResponse = await completion(messageArray)
+    
     const responseText = codeGPTResponse;
 
     // Prepara los parámetros para enviar la respuesta de CodeGPT al canal de Slack
