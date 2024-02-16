@@ -7,7 +7,7 @@ export async function selectAgent(
   accessToken: string
 ) {
   try {
-    let agents: any = await listAgents(); // Suponiendo que esta función devuelve un array de agentes.
+    let agents: any = await listAgents();
     console.log("agents", agents);
     const slackClient = new WebClient(accessToken);
     let modal: ViewsOpenArguments;
