@@ -21,7 +21,7 @@ export async function findUserWithAgent(user_id: string): Promise<any | null> {
   try {
     const findUserSQL: string = `
           SELECT * FROM users
-          WHERE user_id = ? AND agent IS NOT NULL
+          WHERE user_id = ? AND agent_id IS NOT NULL
         `;
     const result = await client.execute({
       sql: findUserSQL,
@@ -42,7 +42,7 @@ export async function findUserWithAgent(user_id: string): Promise<any | null> {
 }
 export async function assignAgentToUser(event: ViewSubmissionEvent) {
   try {
-    console.log(event);
+    console.log("EVENTOOOOOOOOOOO", event);
     // Primero, intentamos encontrar el usuario con el user_id dado
     const findUserSQL = `
       SELECT * FROM users
@@ -62,13 +62,16 @@ export async function assignAgentToUser(event: ViewSubmissionEvent) {
     } else {
       // Si el usuario existe, actualizamos el campo 'agent'
       const updateAgentSQL = `
-          UPDATE users
-          SET agent = ?
-          WHERE user_id = ?
-        `;
+      UPDATE users
+      SET agent_id = ?,
+          agent_name = ?
+      WHERE user_id = ?
+    `;
       await client.execute({
         sql: updateAgentSQL,
         args: [
+          event.view.state.values.agent_selection_block.agent_selection
+            .selected_option.value,
           event.view.state.values.agent_selection_block.agent_selection
             .selected_option.text.text,
           event.user.id,
@@ -85,8 +88,8 @@ async function createUser(event: ViewSubmissionEvent) {
   try {
     const date = new Date().toISOString().slice(0, 10); // Formato YYYY-MM-DD
     const insertUserSQL = `
-      INSERT INTO users (date, user_id, workspace_id, agent)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO users (date, user_id, workspace_id, agent_id, agent_name)
+      VALUES (?, ?, ?, ?, ?)
     `;
     await client.execute({
       sql: insertUserSQL,
@@ -94,6 +97,8 @@ async function createUser(event: ViewSubmissionEvent) {
         date,
         event.user.id,
         event.team.id,
+        event.view.state.values.agent_selection_block.agent_selection
+          .selected_option.value,
         event.view.state.values.agent_selection_block.agent_selection
           .selected_option.text.text,
       ],

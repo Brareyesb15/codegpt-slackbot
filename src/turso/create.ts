@@ -1,5 +1,5 @@
 import { createClient } from "@libsql/client";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 const token = process.env.TURSO_TOKEN_API;
@@ -17,9 +17,9 @@ const client = createClient({
 async function dropWorkspacesTable() {
   try {
     await client.execute(`DROP TABLE IF EXISTS users`);
-    console.log('Table  has been dropped');
+    console.log("Table  has been dropped");
   } catch (error) {
-    console.error('An error occurred while dropping the table:', error);
+    console.error("An error occurred while dropping the table:", error);
   }
 }
 
@@ -38,14 +38,14 @@ async function createWorkspacesTable() {
     `);
     console.log('New table "workspaces" has been created');
   } catch (error) {
-    console.error('An error occurred while creating the table:', error);
+    console.error("An error occurred while creating the table:", error);
   }
 }
 
 // Función para inicializar la base de datos
 async function initializeDatabase() {
-  await dropWorkspacesTable()
-  await createUsersTable()
+  await dropWorkspacesTable();
+  await createUsersTable();
 }
 
 async function createUsersTable() {
@@ -55,12 +55,13 @@ async function createUsersTable() {
         date DATE,
         user_id TEXT PRIMARY KEY,
         workspace_id TEXT NOT NULL,
-        agent TEXT
+        agent_id TEXT,
+        agent_name TEXT
       )
     `);
     console.log('New table "workspaces" has been created');
   } catch (error) {
-    console.error('An error occurred while creating the table:', error);
+    console.error("An error occurred while creating the table:", error);
   }
 }
 

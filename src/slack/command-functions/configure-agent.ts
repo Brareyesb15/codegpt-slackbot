@@ -5,13 +5,14 @@ import { findUserWithAgent } from "../../turso/users-repository";
 export async function configureAgent(
   event: SlackCommandEvent,
   accessToken: string
-) {
+): Promise<void> {
   try {
     let agent = await findUserWithAgent(event.user_id);
 
     const slackClient = new WebClient(accessToken);
     let modal: ViewsOpenArguments;
 
+    console.log("agent", agent);
     if (!agent) {
       // Define el modal para mostrar el mensaje de que no hay agente seleccionado
       modal = {
@@ -43,16 +44,14 @@ export async function configureAgent(
           callback_id: "configure_agent_modal",
           title: {
             type: "plain_text",
-            text: `Configurar tu agente seleccionado: ${agent}`,
+            text: `Configurar ${agent.agent_name}`,
           },
-          submit: {
-            type: "plain_text",
-            text: "Guardar",
-          },
+          // Se elimina la propiedad submit para que los campos no sean obligatorios
           blocks: [
             {
               type: "input",
               block_id: "prompt_block",
+              optional: true, // Hace que este campo no sea obligatorio
               element: {
                 type: "plain_text_input",
                 action_id: "prompt_input",
@@ -69,6 +68,7 @@ export async function configureAgent(
             {
               type: "input",
               block_id: "name_block",
+              optional: true, // Hace que este campo no sea obligatorio
               element: {
                 type: "plain_text_input",
                 action_id: "name_input",
@@ -82,23 +82,11 @@ export async function configureAgent(
                 text: "Nombre",
               },
             },
-            {
-              type: "input",
-              block_id: "welcome_block",
-              element: {
-                type: "plain_text_input",
-                action_id: "welcome_input",
-                placeholder: {
-                  type: "plain_text",
-                  text: "Ingrese el mensaje de bienvenida",
-                },
-              },
-              label: {
-                type: "plain_text",
-                text: "Mensaje de Bienvenida",
-              },
-            },
           ],
+          submit: {
+            type: "plain_text",
+            text: "Guardar",
+          },
         },
       };
     }

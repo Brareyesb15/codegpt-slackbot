@@ -131,22 +131,22 @@ export async function listAgents(): Promise<any> {
   }
 }
 
-// export async function updateAgent(agentId: string, payload: any): Promise<any> {
-//   const url = `${apiEndpoint}/agent/${agentId}`;
+export async function updateAgent(agentId: string, payload: any): Promise<any> {
+  const url = `${apiEndpoint}/agent/${agentId}`;
 
-//   try {
-//     const response = await axios.patch(url, payload, {
-//       headers: {
-//         'Authorization': `Bearer ${codeGPTConfig.apiKey}`,
-//         'Content-Type': 'application/json',
-//       },
-//     });
+  try {
+    const response = await axios.patch(url, payload, {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+    });
 
-//     return response.data;
-//   } catch (error) {
-//     handleAxiosError(error);
-//   }
-// }
+    return response.data;
+  } catch (error) {
+    handleAxiosError(error);
+  }
+}
 
 // export async function deleteAgent(agentId: string): Promise<any> {
 //   const url = `${apiEndpoint}/agent/${agentId}`;
