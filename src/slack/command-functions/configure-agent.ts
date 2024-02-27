@@ -1,18 +1,16 @@
 import { WebClient, ViewsOpenArguments } from "@slack/web-api";
 import { SlackCommandEvent } from "../interfaces";
-import { findUserWithAgent } from "../../turso/users-repository";
 
 export async function configureAgent(
   event: SlackCommandEvent,
   accessToken: string
 ): Promise<void> {
   try {
-    let agent = await findUserWithAgent(event.user_id);
+    let agentId = process.env.SLACK_WORKSPACE_ACCESS_TOKEN;
 
     const slackClient = new WebClient(accessToken);
     let modal: ViewsOpenArguments;
 
-    console.log("agent", agent);
     if (!agent) {
       // Define el modal para mostrar el mensaje de que no hay agente seleccionado
       modal = {

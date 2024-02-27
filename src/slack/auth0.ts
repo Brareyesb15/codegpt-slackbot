@@ -1,7 +1,5 @@
 import axios from "axios";
 import dotenv from "dotenv";
-import { insertWorkspace } from "../turso/workspaces-repository";
-import { AuthResponse } from "./interfaces";
 dotenv.config();
 
 const auth0Callback = async (code: any): Promise<void> => {

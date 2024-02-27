@@ -1,8 +1,7 @@
 import axios from "axios";
 import { Router, Request, Response } from "express";
 import { auth0Callback } from "../slack/auth0";
-import initializeDatabase from "../turso/create";
-import { SlackEvent } from "../slack/interfaces";
+
 import { selectWorkspace } from "../app-flow/init-bot";
 const mainRouter = Router();
 
@@ -47,12 +46,4 @@ mainRouter.post("/slack/events", async (req: Request, res: Response) => {
   }
 });
 
-mainRouter.get("/createTable", async (req, res) => {
-  try {
-    const response = await initializeDatabase();
-    res.status(200).send(response);
-  } catch (error: any) {
-    res.status(400).send(error.message);
-  }
-});
 export default mainRouter;
