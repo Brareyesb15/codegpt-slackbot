@@ -35,12 +35,11 @@ mainRouter.get("/oauth/callback", async (req: Request, res: Response) => {
 mainRouter.post("/slack/events", async (req: Request, res: Response) => {
   const { challenge } = req.body; // Extraer el valor de challenge del cuerpo de la solicitud
   const slackEvent = req.body;
-  console.log("en router", slackEvent);
+
   try {
     selectWorkspace(slackEvent);
-
-    // Enviar una respuesta con el valor de challenge
-    res.set("Content-Type", "text/plain"); // Establecer el encabezado Content-Type
+    // Enviar una respuesta con el valor de challenge (slack verification)
+    res.set("Content-Type", "text/plain");
     challenge ? res.status(200).send(challenge) : res.status(200).send(); // Enviar el valor de challenge como cuerpo de la respuesta
   } catch (error) {
     console.error("Error processing Slack message:", error);
