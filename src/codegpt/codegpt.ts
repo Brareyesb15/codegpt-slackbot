@@ -8,6 +8,7 @@ import {
 import fs from "fs/promises";
 import FormData from "form-data";
 import dotenv from "dotenv";
+import { Agent } from "./interfaces";
 dotenv.config();
 
 const apiEndpoint = process.env.CODEGPT_API_ENDPOINT;
@@ -81,39 +82,22 @@ export async function completion(message: Message[]): Promise<CodeGPTResponse> {
     throw new Error(`HTTP error! status: ${(error as AxiosError).message}`);
   }
 }
-// export async function createAgent(nameAgent: string): Promise<any> {
-//   const url = `${apiEndpoint}/agent`;
-//   const payload = { "name": nameAgent };
 
-//   try {
-//     const response = await axios.post(url, payload, {
-//       headers: {
-//         'Authorization': `Bearer ${codeGPTConfig.apiKey}`,
-//         'Content-Type': 'application/json',
-//       },
-//     });
+export async function getAgent(agentId: string): Promise<Agent> {
+  const url = `${apiEndpoint}/agent/${agentId}`;
 
-//     return response.data;
-//   } catch (error) {
-//     handleAxiosError(error);
-//   }
-// }
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
 
-// export async function getAgent(agentId: string): Promise<any> {
-//   const url = `${apiEndpoint}/agent/${agentId}`;
-
-//   try {
-//     const response = await axios.get(url, {
-//       headers: {
-//         'Authorization': `Bearer ${codeGPTConfig.apiKey}`,
-//       },
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     handleAxiosError(error);
-//   }
-// }
+    return response.data;
+  } catch (error) {
+    handleAxiosError(error);
+  }
+}
 
 export async function listAgents(): Promise<any> {
   const url = `${apiEndpoint}/agent`;
@@ -147,76 +131,6 @@ export async function updateAgent(agentId: string, payload: any): Promise<any> {
     handleAxiosError(error);
   }
 }
-
-// export async function deleteAgent(agentId: string): Promise<any> {
-//   const url = `${apiEndpoint}/agent/${agentId}`;
-
-//   try {
-//     const response = await axios.delete(url, {
-//       headers: {
-//         'Authorization': `Bearer ${codeGPTConfig.apiKey}`,
-//       },
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     handleAxiosError(error);
-//   }
-// }
-
-// export async function usersMe(apiKey: string): Promise<any> {
-//   const url = `${apiEndpoint}/users/me`;
-
-//   try {
-//     const response = await axios.get(url, {
-//       headers: {
-//         'Authorization': `Bearer ${apiKey}`,
-//       },
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     handleAxiosError(error);
-//   }
-// }
-
-// export async function loadDocuments(filename: string): Promise<any> {
-//   const filePath = `./Data/Documents/${filename}`;
-//   const fileContent = await fs.readFile(filePath);
-//   const formData = new FormData();
-//   formData.append('file', fileContent, { filename });
-//   const headers = {
-//     'Authorization': `Bearer ${codeGPTConfig.apiKey}`,
-//     ...formData.getHeaders(),
-//   };
-//   const url = `${apiEndpoint}/document/load`;
-
-//   try {
-//     const response = await axios.post(url, formData, { headers });
-
-//     return response.data;
-//   } catch (error) {
-//     handleAxiosError(error);
-//   }
-// }
-
-// export async function userExists(email: string): Promise<any> {
-//   const url = `${apiEndpoint}/users/exists`;
-//   const payload = { email };
-
-//   try {
-//     const response = await axios.post(url, payload, {
-//       headers: {
-//         'Authorization': `Bearer ${codeGPTConfig.apiKey}`,
-//         'Content-Type': 'application/json',
-//       },
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     handleAxiosError(error);
-//   }
-// }
 
 function handleAxiosError(error: any): never {
   if (axios.isAxiosError(error)) {

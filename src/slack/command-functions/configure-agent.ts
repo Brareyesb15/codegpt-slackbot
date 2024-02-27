@@ -1,5 +1,6 @@
 import { WebClient, ViewsOpenArguments } from "@slack/web-api";
 import { SlackCommandEvent } from "../interfaces";
+import { getAgent } from "../../codegpt/codegpt";
 
 export async function configureAgent(
   event: SlackCommandEvent,
@@ -7,6 +8,7 @@ export async function configureAgent(
 ): Promise<void> {
   try {
     let agentId = process.env.SLACK_WORKSPACE_ACCESS_TOKEN;
+    let agent = await getAgent(agentId as string);
 
     const slackClient = new WebClient(accessToken);
     let modal: ViewsOpenArguments;
@@ -42,7 +44,7 @@ export async function configureAgent(
           callback_id: "configure_agent_modal",
           title: {
             type: "plain_text",
-            text: `Configurar ${agent.agent_name}`,
+            text: `Configurar ${agent.name}`,
           },
           // Se elimina la propiedad submit para que los campos no sean obligatorios
           blocks: [
