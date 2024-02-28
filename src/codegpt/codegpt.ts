@@ -12,8 +12,7 @@ import { Agent } from "./interfaces";
 dotenv.config();
 
 const apiEndpoint = process.env.CODEGPT_API_ENDPOINT;
-const apiKey = process.env.CODEGPT_API_KEY; // ToDo: Hardocodeado, preguntarle a JP si la función en deno necesita
-//apikey o no. De necesitarlo necesitamos guardar en db o traerlo, si no, simplemente omitir.
+const apiKey = process.env.CODEGPT_API_KEY;
 
 export async function completions(
   message: Message[],

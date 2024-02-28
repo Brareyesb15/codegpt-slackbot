@@ -1,7 +1,6 @@
-import { WebClient, ViewsOpenArguments } from "@slack/web-api";
 import { SlackCommandEvent, SlackEvent } from "./interfaces";
 import { configureAgent } from "./command-functions/configure-agent";
-import { handleMessageEvent } from "./message-event";
+
 import { selectAgent } from "./command-functions/select-agent";
 
 // Esta función maneja el comando para configurar el agente
@@ -14,10 +13,7 @@ export async function handleCommand(
     if (event.command === "/configureagent") {
       configureAgent(event, accessToken);
     }
-    if (event.command === "/ask") {
-      console.log(event);
-      // handleMessageEvent(event,accessToken)
-    }
+
     if (event.command === "/selectagent") {
       selectAgent(event, accessToken);
     }

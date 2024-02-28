@@ -1,14 +1,16 @@
 import { WebClient, ViewsOpenArguments } from "@slack/web-api";
 import { SlackCommandEvent } from "../interfaces";
 import { getAgent } from "../../codegpt/codegpt";
+import { Agent } from "../../codegpt/interfaces";
 
 export async function configureAgent(
   event: SlackCommandEvent,
   accessToken: string
 ): Promise<void> {
   try {
-    let agentId = process.env.SLACK_WORKSPACE_ACCESS_TOKEN;
-    let agent = await getAgent(agentId as string);
+    let agent: Agent | undefined;
+    let agentId = process.env.CODEGPT_AGENT_ID;
+    agentId ? (agent = await getAgent(agentId as string)) : null;
 
     const slackClient = new WebClient(accessToken);
     let modal: ViewsOpenArguments;
