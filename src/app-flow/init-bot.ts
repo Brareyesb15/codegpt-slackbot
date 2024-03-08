@@ -7,7 +7,7 @@ dotenv.config();
 
 const selectWorkspace = async (slackEvent: any): Promise<void> => {
   try {
-    const accessToken = process.env.SLACK_WORKSPACE_ACCESS_TOKEN;
+    const accessToken = process.env.SLACK_BOT_USER_OAUTH_TOKEN;
     dispatchEvent(slackEvent, accessToken as string);
   } catch (error) {
     console.error("An error occurred while selecting a workspace:", error);
